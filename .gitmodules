@@ -1,0 +1,3 @@
+[submodule "Rust/sled-hijack"]
+	path = Rust/sled_hijack
+	url = git@github.com:h2obrain/sled-hijack.git
