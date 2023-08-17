@@ -4,6 +4,7 @@ resolver = "2"
 members = [
     "examples/Advanced",
     "examples/Simple",
+    "examples/SimpleSled",
     "crates/lux-camp-badge",
     "crates/lux-camp-badge-animations"
 ]
