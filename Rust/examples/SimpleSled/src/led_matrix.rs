@@ -5,6 +5,7 @@ use smart_leds_trait::{SmartLedsWrite, RGB};
 use std::time::Duration;
 use ws2812_esp32_rmt_driver::{Ws2812Esp32Rmt, RGB8};
 
+
 #[allow(unused)]
 #[derive(Copy, Clone)]
 pub enum Animations {
