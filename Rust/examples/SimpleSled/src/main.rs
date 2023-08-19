@@ -14,13 +14,12 @@ use log::*;
 use smart_leds::RGB8;
 
 use esp_idf_hal::gpio::PinDriver;
+use std::ffi::CStr;
 use std::thread::sleep;
 use std::time::Duration;
-use std::ffi::CStr;
 
 use esp_idf_svc::eventloop::EspSystemEventLoop;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
-
 
 fn main() -> ! {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -51,26 +50,35 @@ fn main() -> ! {
     leds.write_pixels();
 
     info!("Gaht so?");
-    unsafe { info!("{:?}", (*crate::sled_hijack::bindings::sled_modules)); }
+    unsafe {
+        info!("{:?}", crate::sled_hijack::bindings::sled_modules);
+    }
     // unsafe { info!("{:?}", (**crate::sled_hijack::bindings::sled_modules)); }
-    unsafe { info!("{:?}", (*(*crate::sled_hijack::bindings::sled_modules)).name); }
+    unsafe {
+        info!("{:?}", (*crate::sled_hijack::bindings::sled_modules).name);
+    }
 
     for sm in sled_modules() {
         // info!("module!");
-        if !sm.is_null() {
-            unsafe {
-                // info!("module!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
-                let sm = *sm;
-                if !sm.is_null() {
-                    // info!("module!!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
-                    let sm = &(*sm);
-                    info!("module!!!! {} => {:?} == {:?}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules, sm.init);
-                    // let name = CStr::from_ptr(sm.name).to_string_lossy();
-                    // info!("module!!!!!");
-                    // info!("{}", name);
-                }
-            }
+        //if !sm.is_null() {
+        unsafe {
+            // info!("module!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
+            //let sm = *sm;
+            //if !sm.is_null() {
+            // info!("module!!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
+            //let sm = &(*sm);
+            info!(
+                "module!!!! {} => {:?} == {:?}",
+                crate::sled_hijack::bindings::sled_module_count,
+                crate::sled_hijack::bindings::sled_modules,
+                sm.init
+            );
+            let name = CStr::from_ptr(sm.name).to_string_lossy();
+            // info!("module!!!!!");
+            info!("{}", name);
+            //}
         }
+        //}
     }
 
     loop {

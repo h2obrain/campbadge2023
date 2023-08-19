@@ -34,3 +34,7 @@ libc = "*"
 
 [build-dependencies]
 embuild = "0.31.2"
+bindgen = "0.66"
+
+[profile.release]
+lto = false
