@@ -152,6 +152,21 @@ impl LedMatrix {
     pub fn get_pixel(&mut self, x: u8, y: u8) -> RGB8 {
         self.pixels[(x + y * self.led_columns) as usize]
     }
+    pub fn set_pixel_range( // <<< insert name to your liking :)
+        &mut self,
+        start_x: u8,
+        start_y: u8,
+        end_x: u8,
+        end_y: u8,
+        color: RGB8
+    ) {
+        // Maybe error by one?
+        for x in start_x..end_x {
+            for y in start_y..end_y {
+                self.set_pixel(x, y, color);
+            }
+        }
+    }
     pub fn write_pixels(&mut self) {
         let pixels = self.pixels.iter().copied();
         self.ws2812.write(pixels).unwrap();
