@@ -5,6 +5,8 @@ use core::slice;
 pub mod bindings {
     extern crate libc;
 
+    #[repr(C)]
+    #[derive(Debug)]
     pub struct RGB {
         pub red: libc::c_uchar,
         pub green: libc::c_uchar,
@@ -13,6 +15,7 @@ pub mod bindings {
     }
 
     #[repr(C)]
+    #[derive(Debug)]
     pub struct Module {
         pub name: *const libc::c_char,
         pub init: Option<unsafe extern "C" fn(u32) -> libc::c_int>,

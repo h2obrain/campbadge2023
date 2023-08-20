@@ -49,36 +49,12 @@ fn main() -> ! {
     leds.set_all_pixel(RGB8::new(0, 25, 25));
     leds.write_pixels();
 
-    info!("Gaht so?");
-    unsafe {
-        info!("{:?}", crate::sled_hijack::bindings::sled_modules);
-    }
-    // unsafe { info!("{:?}", (**crate::sled_hijack::bindings::sled_modules)); }
-    unsafe {
-        info!("{:?}", (*crate::sled_hijack::bindings::sled_modules).name);
-    }
-
+    info!("Sled modules");
     for sm in sled_modules() {
-        // info!("module!");
-        //if !sm.is_null() {
         unsafe {
-            // info!("module!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
-            //let sm = *sm;
-            //if !sm.is_null() {
-            // info!("module!!! {} => {} == {}", crate::sled_hijack::bindings::sled_module_count, crate::sled_hijack::bindings::sled_modules.addr(), sm.addr());
-            //let sm = &(*sm);
-            info!(
-                "module!!!! {} => {:?} == {:?}",
-                crate::sled_hijack::bindings::sled_module_count,
-                crate::sled_hijack::bindings::sled_modules,
-                sm.init
-            );
             let name = CStr::from_ptr(sm.name).to_string_lossy();
-            // info!("module!!!!!");
-            info!("{}", name);
-            //}
+            info!("- {}", name);
         }
-        //}
     }
 
     loop {

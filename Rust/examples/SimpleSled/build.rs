@@ -15,7 +15,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = bindgen::Builder::default()
         .header("../../sled_hijack/include/sled.h")
         .clang_arg("-I../../sled_hijack/include/")
-        .clang_arg("-DBUILD_SLED_LIB")
         .generate()
         .expect("Unable to generate bindings");
 
