@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.spec": "python",
+			"matrix.h": "c",
+			"sled_modules.h": "c",
+			"timers.h": "c",
+			"*.ipp": "c",
+			"*.tcc": "c",
+			"stdlib.h": "c",
+			"assert.h": "c",
+			"sled.h": "c",
+			"stdint.h": "c",
+			"cstdint": "c"
+		}
+	}
+}

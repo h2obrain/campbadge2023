@@ -9,7 +9,6 @@ rust-version = "1.66"
 
 default = ["std", "hal", "esp-idf-sys/native","smart-leds-trait", "embedded-graphics-core"]
 
-
 pio = ["esp-idf-sys/pio"]
 all = ["std", "nightly", "experimental", "embassy"]
 hal = ["esp-idf-hal", "embedded-svc", "esp-idf-svc"]

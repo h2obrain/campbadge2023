@@ -5,8 +5,6 @@
 mod led_matrix;
 mod sled_hijack;
 
-use crate::sled_hijack::sled_modules;
-
 use esp_idf_hal::peripherals::Peripherals;
 use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 use log::*;
@@ -20,9 +18,8 @@ use std::time::Duration;
 use esp_idf_svc::eventloop::EspSystemEventLoop;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
 
-
 use sled_hijack::SLED_STATE;
-
+use sled_hijack::bindings::dummy_module;
 
 fn main() -> ! {
     // It is necessary to call this function once. Otherwise some patches to the runtime
@@ -43,6 +40,7 @@ fn main() -> ! {
     // let mut led_state = LedState::new();
     
     info!("Hello, world!!");
+    info!("Hoi {:?} {}!", unsafe {dummy_module.init}, unsafe {dummy_module.init.unwrap()(0)});
 
     {
         info!("locking leds");

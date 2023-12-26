@@ -3,7 +3,7 @@ extern crate rand;
 
 use crate::led_matrix::LedMatrix;
 use core::slice;
-use std::sync::{LazyLock, Mutex};
+use std::sync::{LazyLock, Mutex, PoisonError};
 //use embedded_svc::utils::mutex::Mutex;
 use smart_leds::RGB8;
 use esp_idf_svc::systime::EspSystemTime;
@@ -27,7 +27,7 @@ pub mod bindings {
     #[repr(C)]
     #[derive(Debug)]
     pub struct Module {
-        pub _name: u32, //*const u8, // *const libc::c_char,
+        pub _name: usize, //*const u8, // *const libc::c_char,
         pub init: Option<unsafe extern "C" fn(u32) -> i32>,
         pub reset: Option<unsafe extern "C" fn(u32)>,
         pub draw: Option<unsafe extern "C" fn(u32) -> i32>,
@@ -44,6 +44,7 @@ pub mod bindings {
         // Declare any C functions or types needed for accessing sled_modules
         pub static sled_module_count: u32;
         pub static sled_modules: *const Module;
+        pub static dummy_module: Module;
     }
 
     // #[link(name = "sled")]
@@ -114,8 +115,8 @@ impl<'l> SledState<'l> {
     fn next_mod_i(&self) -> usize {
         let i = unsafe { self.rng.lock().unwrap().gen::<u32>() % bindings::sled_module_count };
         info!("next mod index is {}", i);
-        i as usize // not soo nice :D
-        // 0
+        // i as usize // not soo nice :D
+        4
     }
     fn next_mod(&self) {
         info!("next mod");
@@ -131,7 +132,14 @@ impl<'l> SledState<'l> {
         let current = &self.modules[next_mod];
         let next_mod = next_mod as u32;
         info!("init next mod ({}) {:?}", current.name(), current.init);
-        unsafe { current.init.unwrap()(next_mod) };
+        unsafe {
+            let init = match current.init {
+                Some(init) => init,
+                None => panic!("Init function is None!"),
+            };
+            info!("found init");
+            init(next_mod);
+        };
         info!("update current mod");
         *self.current.lock().unwrap() = Some(&current);
     }
@@ -155,6 +163,20 @@ pub static SLED_STATE: LazyLock<SledState> = LazyLock::new(|| {
 // // pub static mut SLED_STATE.leds: Option<LedMatrix> = None;
 
 
+/* apparently _write is already defined.. */
+// #[no_mangle]
+// pub extern "C" fn _write(fd: i32, buf: usize, cnt: usize) -> i32 {
+//     let buf = unsafe { std::slice::from_raw_parts(buf as *const u8, cnt) };
+//     let buf = std::str::from_utf8(buf).unwrap();
+//     match fd {
+//         1 => info!("C: {}", buf),
+//         2 => error!("C: {}", buf),
+//         _ => error!("C: Invalid file descriptor ({})", fd),
+//     }
+//     buf.len() as i32
+// }
+
+
 // if not defined use the t+=1000 hack implemented as weak function :P
 #[no_mangle]
 pub extern "C" fn oscore_udate() -> u64 {
@@ -170,7 +192,9 @@ pub extern "C" fn matrix_init(_outmodno: i32) -> i32 {
 
 #[no_mangle]
 pub extern "C" fn matrix_getx() -> i32 {
-    i32::try_from(SLED_STATE.leds.lock().unwrap().led_columns()).unwrap()
+    info!("GetX {}", SLED_STATE.leds.is_poisoned());
+    123
+    // i32::try_from(SLED_STATE.leds.lock().unwrap().led_columns()).unwrap()
 }
 
 #[no_mangle]
